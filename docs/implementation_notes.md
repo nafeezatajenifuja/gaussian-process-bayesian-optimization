@@ -31,6 +31,29 @@ w_draw = mean_w + R z,  z ~ N(0, I)
 
 The extracted sampler uses those same equations, with vector scaling in place of explicit diagonal matrices. Its distribution is checked against direct Gaussian conditioning. The surrogate's finite covariance is H(x) H(x')^T. An independent test checks the squared-exponential kernel approximation with 100 terms; the experiment retains the original 50 terms. That test is a numerical sanity check, not a convergence study of the 50-term approximation.
 
+## Experiment configuration
+
+The demonstration minimizes a synthetic objective on `[-2, 2]`. Its fixed settings are inherited from the original notebook.
+
+| Setting | Value |
+| --- | --- |
+| Objective | Spectral basis indices 1 and 2 with coefficients `[-0.25, -2.5]` |
+| Spectral truncation | 50 terms |
+| Gaussian reference-measure scale | 1.0 |
+| Kernel length scale | 0.4 |
+| Observation-noise standard deviation | 0.001 |
+| Initial observation locations | `[-2, 0, 2]` |
+| Acquisition starting points | `[-2, -1, 0, 1, 2]` |
+| Additional evaluations | 30 by default, giving 33 observations in total |
+
+The GP has zero prior mean. GP parameters, truncation, and observation-noise scale remain fixed throughout the demonstration. The posterior-update cycle stops after the requested number of additional evaluations.
+
+## Historical representative figure
+
+This image is extracted unchanged from **iteration 30 of the original notebook**, not from the new seeded demonstration. It shows observations available before that iteration's update, one posterior draw, and the selected point on that draw. Its legacy label “posterior global minimum” describes the selected candidate; the search provides no global-optimality certificate. The original 30-page iteration PDF is preserved in [provenance/](../provenance/K_Iterations.pdf).
+
+The figure illustrates one historical run. No benchmark comparison, speedup, convergence rate, or performance guarantee is claimed.
+
 ## Documented changes
 
 The original notebook and PDF are unchanged. The representative PNG is the original final-iteration PNG decoded from the notebook, with identical image bytes.
@@ -49,9 +72,9 @@ The original notebook and PDF are unchanged. The representative PNG is the origi
 
 No new acquisition policy, GP fitting routine, objective, benchmark, or convergence claim was introduced. Because the source is unseeded, the candidate-index correction can affect decisions, and numerical libraries changed, a new seeded history is not an exact replay of the source run.
 
-## README claim-verification checklist for the author
+## Scientific and provenance reference
 
-These are all substantive scientific, numerical, and provenance claims in the README. Check them before public release; the code-supported items have already been checked against the selected archive.
+This reference records the scientific settings, numerical qualifications, and provenance details behind the README. The code-supported items have been checked against the selected archive; author-supplied attribution is identified separately.
 
 | Claim | Evidence / qualification |
 | --- | --- |
@@ -71,6 +94,95 @@ These are all substantive scientific, numerical, and provenance claims in the RE
 | No fitted hyperparameters, baselines, regret analysis, constraints, batch acquisition, or multidimensional experiment | Absent from all selected archive source cells. The work remains a course implementation. |
 | Standard methods are implemented, rather than invented here | The project makes no novelty claim; GP, BO, Thompson sampling, SVD, and L-BFGS-B are established methods. |
 | Graduate Decision-Making with Uncertainty course, University of Houston, and authorship | Supplied by the author. The archive alone does not independently establish the official course title, institutional attribution, authorship, or any instructor-provided code attribution. Confirm these and retain any required course-material credits before publication. |
+
+## Repository layout
+
+```text
+.
+├── README.md
+├── requirements.txt
+├── .gitignore
+├── .gitattributes
+├── notebooks/
+│   ├── original_project.ipynb       # unchanged notebook, including original outputs
+│   └── cleaned_demo.ipynb           # concise demo; committed without outputs
+├── src/
+│   ├── __init__.py
+│   ├── gp_model.py                 # spectral basis, eigenvalues, derivatives
+│   ├── posterior_sampling.py       # SVD conditioning and coefficient draws
+│   ├── acquisition.py              # fixed posterior draw and gradient
+│   ├── optimization.py             # synthetic objective, BO loop, runnable CLI
+│   └── utils.py                    # validation and local random generator
+├── tests/
+│   ├── __init__.py
+│   ├── test_gp.py
+│   ├── test_sampling.py
+│   ├── test_shapes.py
+│   └── test_optimization.py
+├── scripts/
+│   └── run_notebook.py              # headless demo execution without Jupyter
+├── figures/
+│   └── representative_result.png
+├── provenance/
+│   ├── K_Iterations.pdf
+│   └── manifest.json               # original archive and artifact SHA-256 hashes
+└── docs/
+    ├── implementation_notes.md
+    └── portfolio.md                # publication commands and application copy
+```
+
+## Environment and reproduction
+
+Use **Python 3.11 or newer**. The pinned dependencies were validated with **Python 3.13.5**; this is the locally tested interpreter, rather than a claim of testing every supported Python version. No external dataset or API is needed.
+
+```bash
+git clone https://github.com/nafeezatajenifuja/gaussian-process-bayesian-optimization.git
+cd gaussian-process-bayesian-optimization
+python -m venv .venv
+```
+
+Activate the environment in PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Or on macOS / Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+Install and validate from the repository root:
+
+```bash
+python -m pip install -r requirements.txt
+python -m unittest discover -s tests -v
+python -m src.optimization --seed 100 --iterations 30
+python scripts/run_notebook.py
+```
+
+The optimization command writes `figures/seeded_demo.png` and `results/seeded_history.npz`. The history contains observation locations and values, posterior coefficient draws, acquisition values, local-solver success counts, and run settings. These generated files are ignored by Git. The preserved representative figure is never overwritten by these commands.
+
+`notebooks/cleaned_demo.ipynb` can also be opened in an existing Jupyter-compatible editor. The headless runner executes the same plain-Python cells without installing notebook tooling or writing cell outputs into the source notebook. The demo finds the repository root when opened from either the root or the `notebooks/` directory.
+
+Seed **100** is introduced for the reorganized demonstration; the original optimization notebook has **no fixed seed**. Fixed-seed behavior is tested within the same numerical environment. Exact floating-point trajectories can differ across numerical-library versions and platforms. The preserved notebook is a historical artifact; use the cleaned demo to run with the pinned current dependencies, because the original scalar-assignment syntax is incompatible with current NumPy.
+
+### Dependencies and tooling
+
+**Python, NumPy, SciPy, and Matplotlib.** Seaborn is also listed in `requirements.txt` because it is imported in the original notebook, although the extracted implementation does not use it. `pylab` in the original notebook is part of Matplotlib. Tests use Python's standard-library `unittest`; notebook execution uses standard-library JSON handling. There is no additional Bayesian-optimization framework dependency.
+
+## Scope and limitations
+
+This is a **graduate course implementation**, not a production Bayesian-optimization framework. It addresses a single one-dimensional synthetic objective with a fixed domain, fixed spectral truncation, fixed GP parameters, and a known observation-noise scale. There is no hyperparameter learning, baseline evaluation, regret study, constraint handling, batch acquisition, or multidimensional experiment. Repeated evaluations at similar locations are permitted.
+
+Multistart L-BFGS-B is a local numerical method. Solver success counts are exposed for inspection, but no global optimum or convergence guarantee is established. The original unseeded trajectory cannot be regenerated exactly from a documented seed. The cleaned implementation corrects an initial-candidate indexing error and modernizes a scalar assignment; these changes are documented in [Documented changes](#documented-changes). They preserve the intended method, while a new seeded run may choose a different evaluation sequence from the historical run.
+
+## Archive provenance
+
+The source is `Nafeezat_CIVE_7397_Project (1).zip`, specifically `Nafeezat_CIVE_7397_Project/Nafeezat_Project.ipynb`. The two accessible course-project ZIP copies have identical SHA-256 hashes; their checkpoint and main notebook have identical cell source code but different saved outputs. The original main notebook was copied byte for byte to `notebooks/original_project.ipynb`.
+
+Artifact hashes are recorded in [the provenance manifest](../provenance/manifest.json). No license has been selected or added.
 
 ## Validation commands
 
