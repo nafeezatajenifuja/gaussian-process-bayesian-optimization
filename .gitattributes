@@ -1,0 +1,6 @@
+* text=auto eol=lf
+
+# Preserve the archived scientific artifacts byte for byte on every platform.
+notebooks/original_project.ipynb -text
+*.pdf -text
+*.png -text

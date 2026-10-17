@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.coverage
+htmlcov/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+build/
+dist/
+*.egg-info/
+figures/seeded_demo.png
+results/

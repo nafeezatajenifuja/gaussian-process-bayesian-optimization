@@ -1,0 +1,6 @@
+# Direct dependencies pinned to the environment used for validation (Python 3.13.5).
+numpy==2.4.4
+scipy==1.16.2
+matplotlib==3.10.6
+# Imported in the preserved original notebook; unused by the extracted modules.
+seaborn==0.13.2

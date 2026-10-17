@@ -1,0 +1,26 @@
+{
+  "source_archive": "Nafeezat_CIVE_7397_Project (1).zip",
+  "source_archive_sha256": "db43c92c67f4864970933b049d25a3613b49260d80633261c746690d294c6c3f",
+  "source_notebook_python_version": "3.10.9",
+  "original_seed": null,
+  "artifacts": [
+    {
+      "path": "notebooks/original_project.ipynb",
+      "origin": "Nafeezat_CIVE_7397_Project/Nafeezat_Project.ipynb",
+      "bytes": 2424574,
+      "sha256": "4d61c38e51f107f8d796a41248373f84f9bb0249d2bf96256a18c365ce9167fc"
+    },
+    {
+      "path": "provenance/K_Iterations.pdf",
+      "origin": "Nafeezat_CIVE_7397_Project/K_Iterations.pdf",
+      "bytes": 498340,
+      "sha256": "36c450b30596b6ee0d4cfbf33fe5ae89c785e58a52243459d311b8c184f52f9c"
+    },
+    {
+      "path": "figures/representative_result.png",
+      "origin": "Nafeezat_CIVE_7397_Project/Nafeezat_Project.ipynb::cell[30]::last image/png output",
+      "bytes": 59418,
+      "sha256": "e2ce03a5d2727fcd46a97945bf1eeaaec98e8103486b9cd1433f2855ce1dd430"
+    }
+  ]
+}
