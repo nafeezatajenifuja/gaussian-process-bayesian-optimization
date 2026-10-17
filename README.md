@@ -8,7 +8,7 @@ When objective evaluations are expensive, choosing where to evaluate becomes par
 
 I construct the Gaussian-process surrogate explicitly using a spectral representation, update it as noisy observations become available, and draw entire functions from the resulting posterior. Each draw represents one plausible version of the unknown objective under the model.
 
-With Thompson sampling, one posterior draw is treated as a plausible objective for the next decision. I search for a low point on that sampled function, evaluate the true objective there, add the new observation, and update the GP before repeating the process. The full sampling and sequential optimization loop is implemented directly in Python.
+With Thompson sampling, one posterior draw is treated as a plausible objective for the next decision. I search for a low point on that sampled function, evaluate the true objective there, add the new observation, and update the GP before repeating the process. The GP representation, posterior sampling, and sequential optimization loop are implemented directly in Python.
 
 ## Bayesian optimization in this project
 
